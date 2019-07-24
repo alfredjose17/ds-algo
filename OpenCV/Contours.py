@@ -14,9 +14,9 @@ while True:
     
     contours, _ = cv2.findContours(mask,cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)
     
-    for contour in contours:
-        cv2.drawContours(frame, contour, -1, (0, 255, 0), 3)
-    
+    for i in contours:
+        cv2.drawContours(frame, i, -1, (0, 255, 0), 3)
+
     cv2.imshow("Frame", frame)
     cv2.imshow("Mask", mask)
     
