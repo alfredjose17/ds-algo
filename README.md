@@ -1,6 +1,6 @@
 # Algorithms
 
 1. OpenCV
-2. Tkinter
-3. Algorithmic Toolbox
-4. Object Oriented Design
+2. Algorithmic Toolbox
+3. Object Oriented Design
+4. Graphs
