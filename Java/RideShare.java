@@ -96,15 +96,14 @@ class RideManager {
     public List<Integer> getInactiveDrivers(int currentTime, int threshold) {
         if (rides.isEmpty()) {return Collections.emptyList();}
 
-        Map<Integer, Integer> lastEndTime = new HashMap<>();
-
-        for (Ride r : rides) {
-            if (r == null) {continue;}
-
-            lastEndTime.put(r.getDriverId(), Math.max(lastEndTime.getOrDefault(r.getDriverId(), 0), r.getEndTime()));
-        }
-
-        return lastEndTime.entrySet().stream()
+        return rides.stream()
+                .collect(Collectors.groupingBy(
+                        Ride::getDriverId,
+                        Collectors.collectingAndThen(
+                                Collectors.maxBy(Comparator.comparing(Ride::getEndTime)),
+                                opt -> opt.map(Ride::getEndTime).orElse(0)
+                        )
+                )).entrySet().stream()
                 .filter(ride -> currentTime - ride.getValue() > threshold)
                 .map(Map.Entry::getKey)
                 .toList();
