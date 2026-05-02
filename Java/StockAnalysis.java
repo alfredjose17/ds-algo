@@ -29,6 +29,18 @@ public class StockAnalysis {
         List<StockCollection> portfolio = List.of(aapl, msft);
         System.out.println("Portfolio total: " + StockCollection.getTotal(portfolio));
         // Expected: (10 * 185.00) + (5 * 370.00) = 3700.0
+
+        // --- Q4 test ---
+        Tradebook book = new Tradebook();
+        book.market.put("AAPL", aapl);
+
+        book.trades.add(new Trade("AAPL", TradeType.BUY,  10, 182.00, LocalDate.of(2024, 1, 1)));
+        book.trades.add(new Trade("AAPL", TradeType.BUY,   5, 184.00, LocalDate.of(2024, 1, 2)));
+        book.trades.add(new Trade("AAPL", TradeType.SELL,  8, 185.00, LocalDate.of(2024, 1, 3)));
+
+        double[] profit = book.getProfit();
+        System.out.println("Unrealized: " + profit[0]);  // Expected: 11.0
+        System.out.println("Realized:   " + profit[1]);  // Expected: 24.0
     }
 }
 
@@ -106,5 +118,49 @@ class StockCollection {
             sum += s.getShares() * s.latestPrice();
         }
         return sum;
+    }
+}
+
+// ------------------ TRADEBOOK ------------------
+
+enum TradeType { BUY, SELL }
+
+class Trade {
+    String symbol;
+    TradeType type;
+    int shares;
+    double price;
+    LocalDate date;
+
+    public Trade(String s, TradeType t, int sh, double p, LocalDate d) {
+        symbol = s; type = t; shares = sh; price = p; date = d;
+    }
+}
+
+class Tradebook {
+    List<Trade> trades = new ArrayList<>();
+    Map<String, StockCollection> market = new HashMap<>();
+
+    // Q4: IMPLEMENT
+    // Return double[] { unrealized, realized }
+    // realized  = P/L from SELL trades matched against BUY lots using FIFO
+    // unrealized = remaining open lots valued at latest market price minus cost basis
+    // Trades are in chronological order. Ignore short sells.
+    public double[] getProfit() {
+        if (trades.isEmpty()) {
+            return new double[]{0.0, 0.0};
+        }
+
+        Map<String, Deque<Double[]>> lots = new HashMap<>();
+        for (Trade trade : trades) {
+            if (trade == null) continue;
+            if (lots.containsKey(trade.symbol)) {
+                lots.get(trade.symbol).addFirst(new Double[]{(double) trade.shares, trade.price});
+            }
+            else lots.put(trade.symbol, new ArrayDeque<>());
+        }
+
+        System.out.println(lots);
+        return new double[]{0.0, 0.0};
     }
 }
