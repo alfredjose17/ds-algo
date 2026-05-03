@@ -264,8 +264,8 @@ class Membership {
                 .entrySet().stream()
                 .sorted(Map.Entry.<Integer, Integer>comparingByValue().reversed()
                         .thenComparing(Map.Entry.comparingByKey()))
-                .map(Map.Entry::getKey)
                 .limit(k)
+                .map(Map.Entry::getKey)
                 .toList();
     }
 }
